@@ -15,50 +15,57 @@ import {
     Vector3
 } from "three";
 
-const AFOControls = function(object, domElement) {
+class AFOControls {
+    constructor(object, domElement) {
+        this.object = object;
+        if (domElement === undefined) {
+            console.warn('THREE.FlyControls: The second parameter "domElement" is now mandatory.');
+            this.domElement = document;
+        }
+        else {
+            this.domElement = domElement;
+            this.domElement.setAttribute('tabindex', - 1);
+        }
 
-    if (domElement === undefined) {
-        console.warn('THREE.FlyControls: The second parameter "domElement" is now mandatory.');
-        domElement = document;
+        // API
+        this.movementSpeed = 1.0;
+        this.rollSpeed = 0.005;
+        this.dragToLook = false;
+        this.autoForward = false;
+
+        // internals
+        this.tmpQuaternion = new Quaternion();
+        this.mouseStatus = 0;
+        this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
+        this.moveVector = new Vector3(0, 0, 0);
+        this.rotationVector = new Vector3(0, 0, 0);
+
+        // event listeners
+        // const _mousemove = bind(this, this.mousemove);
+        // const _mousedown = bind(this, this.mousedown);
+        // const _mouseup = bind(this, this.mouseup);
+        // this.domElement.addEventListener('mousemove', _mousemove, false);
+        // this.domElement.addEventListener('mousedown', _mousedown, false);
+        // this.domElement.addEventListener('mouseup', _mouseup, false);
+
+        const _keydown = this.bind(this, this.keydown);
+        const _keyup = this.bind(this, this.keyup);
+        window.addEventListener('keydown', _keydown, false);
+        window.addEventListener('keyup', _keyup, false);
+
+        this.domElement.addEventListener('contextmenu', contextmenu, false);
+
+        this.updateMovementVector();
+        this.updateRotationVector();
     }
 
-    this.object = object;
-    this.domElement = domElement;
-
-    if (domElement) {
-        this.domElement.setAttribute('tabindex', - 1);
-    }
-
-    // API
-
-    this.movementSpeed = 1.0;
-    this.rollSpeed = 0.005;
-
-    this.dragToLook = false;
-    this.autoForward = false;
-
-    // disable default target object behavior
-
-    // internals
-
-    this.tmpQuaternion = new Quaternion();
-
-    this.mouseStatus = 0;
-
-    this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
-    this.moveVector = new Vector3(0, 0, 0);
-    this.rotationVector = new Vector3(0, 0, 0);
-
-    this.keydown = function(event) {
-
+    keydown(event) {
         if (event.altKey) {
             return;
         }
-
         //event.preventDefault();
 
         switch (event.keyCode) {
-
             case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
 
             case 87: /*W*/ this.moveState.forward = 1; break;
@@ -78,18 +85,13 @@ const AFOControls = function(object, domElement) {
 
             case 81: /*Q*/ this.moveState.rollLeft = 1; break;
             case 69: /*E*/ this.moveState.rollRight = 1; break;
-
         }
-
         this.updateMovementVector();
         this.updateRotationVector();
+    }
 
-    };
-
-    this.keyup = function(event) {
-
+    keyup(event) {
         switch (event.keyCode) {
-
             case 16: /* shift */ this.movementSpeedMultiplier = 1; break;
 
             case 87: /*W*/ this.moveState.forward = 0; break;
@@ -109,15 +111,12 @@ const AFOControls = function(object, domElement) {
 
             case 81: /*Q*/ this.moveState.rollLeft = 0; break;
             case 69: /*E*/ this.moveState.rollRight = 0; break;
-
         }
-
         this.updateMovementVector();
         this.updateRotationVector();
+    }
 
-    };
-
-    this.mousedown = function(event) {
+    mousedown(event) {
 
         if (this.domElement !== document) {
 
@@ -145,9 +144,9 @@ const AFOControls = function(object, domElement) {
 
         }
 
-    };
+    }
 
-    this.mousemove = function(event) {
+    mousemove(event) {
 
         if (!this.dragToLook || this.mouseStatus > 0) {
 
@@ -162,9 +161,9 @@ const AFOControls = function(object, domElement) {
 
         }
 
-    };
+    }
 
-    this.mouseup = function(event) {
+    mouseup(event) {
 
         event.preventDefault();
         event.stopPropagation();
@@ -190,10 +189,9 @@ const AFOControls = function(object, domElement) {
 
         this.updateRotationVector();
 
-    };
+    }
 
-    this.update = function(delta) {
-
+    update(delta) {
         const moveMult = delta * this.movementSpeed;
         const rotMult = delta * this.rollSpeed;
 
@@ -206,12 +204,9 @@ const AFOControls = function(object, domElement) {
 
         // expose the rotation vector for convenience
         this.object.rotation.setFromQuaternion(this.object.quaternion, this.object.rotation.order);
+    }
 
-
-    };
-
-    this.updateMovementVector = function() {
-
+    updateMovementVector() {
         const forward = (this.moveState.forward || (this.autoForward && !this.moveState.back)) ? 1 : 0;
 
         this.moveVector.x = (- this.moveState.left + this.moveState.right);
@@ -219,85 +214,49 @@ const AFOControls = function(object, domElement) {
         this.moveVector.z = (- forward + this.moveState.back);
 
         //console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
+    }
 
-    };
-
-    this.updateRotationVector = function() {
-
+    updateRotationVector() {
         this.rotationVector.x = (- this.moveState.pitchDown + this.moveState.pitchUp);
         this.rotationVector.y = (- this.moveState.yawRight + this.moveState.yawLeft);
         this.rotationVector.z = (- this.moveState.rollRight + this.moveState.rollLeft);
 
         //console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
+    }
 
-    };
-
-    this.getContainerDimensions = function() {
-
+    getContainerDimensions() {
         if (this.domElement !== document) {
-
             return {
                 size: [this.domElement.offsetWidth, this.domElement.offsetHeight],
                 offset: [this.domElement.offsetLeft, this.domElement.offsetTop]
             };
-
         } else {
-
             return {
                 size: [window.innerWidth, window.innerHeight],
                 offset: [0, 0]
             };
-
         }
+    }
 
-    };
-
-    function bind(scope, fn) {
-
+    bind(scope, fn) {
         return function() {
-
             fn.apply(scope, arguments);
-
         };
-
     }
 
-    function contextmenu(event) {
-
-        event.preventDefault();
-
-    }
-
-    this.dispose = function() {
-
+    dispose(_keydown, _keyup) {
         this.domElement.removeEventListener('contextmenu', contextmenu, false);
-        this.domElement.removeEventListener('mousedown', _mousedown, false);
-        this.domElement.removeEventListener('mousemove', _mousemove, false);
-        this.domElement.removeEventListener('mouseup', _mouseup, false);
+        // this.domElement.removeEventListener('mousedown', _mousedown, false);
+        // this.domElement.removeEventListener('mousemove', _mousemove, false);
+        // this.domElement.removeEventListener('mouseup', _mouseup, false);
 
         window.removeEventListener('keydown', _keydown, false);
         window.removeEventListener('keyup', _keyup, false);
+    }
+}
 
-    };
-
-    const _mousemove = bind(this, this.mousemove);
-    const _mousedown = bind(this, this.mousedown);
-    const _mouseup = bind(this, this.mouseup);
-    const _keydown = bind(this, this.keydown);
-    const _keyup = bind(this, this.keyup);
-
-    this.domElement.addEventListener('contextmenu', contextmenu, false);
-
-    // this.domElement.addEventListener('mousemove', _mousemove, false);
-    // this.domElement.addEventListener('mousedown', _mousedown, false);
-    // this.domElement.addEventListener('mouseup', _mouseup, false);
-
-    window.addEventListener('keydown', _keydown, false);
-    window.addEventListener('keyup', _keyup, false);
-
-    this.updateMovementVector();
-    this.updateRotationVector();
-
-};
+function contextmenu(event) {
+    event.preventDefault();
+}
 
 export default AFOControls;
