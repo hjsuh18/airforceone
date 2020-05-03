@@ -19,7 +19,10 @@ class AFOControls {
     constructor(object, domElement) {
         this.object = object;
         if (domElement === undefined) {
-            console.warn('THREE.FlyControls: The second parameter "domElement" is now mandatory.');
+            console.warn(
+                `THREE.FlyControls: The second parameter "domElement" is now 
+                mandatory.`
+            );
             this.domElement = document;
         }
         else {
@@ -36,7 +39,20 @@ class AFOControls {
         // internals
         this.tmpQuaternion = new Quaternion();
         this.mouseStatus = 0;
-        this.moveState = { up: 0, down: 0, left: 0, right: 0, forward: 0, back: 0, pitchUp: 0, pitchDown: 0, yawLeft: 0, yawRight: 0, rollLeft: 0, rollRight: 0 };
+        this.moveState = {
+            up: 0,
+            down: 0,
+            left: 0,
+            right: 0,
+            forward: 0,
+            back: 0,
+            pitchUp: 0,
+            pitchDown: 0,
+            yawLeft: 0,
+            yawRight: 0,
+            rollLeft: 0,
+            rollRight: 0
+        };
         this.moveVector = new Vector3(0, 0, 0);
         this.rotationVector = new Vector3(0, 0, 0);
 
@@ -117,35 +133,58 @@ class AFOControls {
         this.object.translateY(this.moveVector.y * moveMult);
         this.object.translateZ(this.moveVector.z * moveMult);
 
-        this.tmpQuaternion.set(this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1).normalize();
+        this.tmpQuaternion.set(
+            this.rotationVector.x * rotMult,
+            this.rotationVector.y * rotMult,
+            this.rotationVector.z * rotMult,
+            1
+        ).normalize();
         this.object.quaternion.multiply(this.tmpQuaternion);
 
         // expose the rotation vector for convenience
-        this.object.rotation.setFromQuaternion(this.object.quaternion, this.object.rotation.order);
+        this.object.rotation.setFromQuaternion(
+            this.object.quaternion,
+            this.object.rotation.order
+        );
     }
 
     updateMovementVector() {
-        const forward = (this.moveState.forward || (this.autoForward && !this.moveState.back)) ? 1 : 0;
+        const forward = (
+            this.moveState.forward
+            || (this.autoForward && !this.moveState.back)
+        ) ? 1 : 0;
 
         this.moveVector.x = (- this.moveState.left + this.moveState.right);
         this.moveVector.y = (- this.moveState.down + this.moveState.up);
         this.moveVector.z = (- forward + this.moveState.back);
 
-        //console.log( 'move:', [ this.moveVector.x, this.moveVector.y, this.moveVector.z ] );
+        // console.log(
+        //     'move:',
+        //     [this.moveVector.x, this.moveVector.y, this.moveVector.z]
+        // );
     }
 
     updateRotationVector() {
-        this.rotationVector.x = (- this.moveState.pitchDown + this.moveState.pitchUp);
-        this.rotationVector.y = (- this.moveState.yawRight + this.moveState.yawLeft);
-        this.rotationVector.z = (- this.moveState.rollRight + this.moveState.rollLeft);
+        this.rotationVector.x = - this.moveState.pitchDown +
+            this.moveState.pitchUp;
+        this.rotationVector.y = - this.moveState.yawRight +
+            this.moveState.yawLeft;
+        this.rotationVector.z = - this.moveState.rollRight +
+            this.moveState.rollLeft;
 
-        //console.log( 'rotate:', [ this.rotationVector.x, this.rotationVector.y, this.rotationVector.z ] );
+        // console.log(
+        //     'rotate:',
+        //     [this.rotationVector.x, this.rotationVector.y, this.rotationVector.z]
+        // );
     }
 
     getContainerDimensions() {
         if (this.domElement !== document) {
             return {
-                size: [this.domElement.offsetWidth, this.domElement.offsetHeight],
+                size: [
+                    this.domElement.offsetWidth,
+                    this.domElement.offsetHeight
+                ],
                 offset: [this.domElement.offsetLeft, this.domElement.offsetTop]
             };
         } else {
