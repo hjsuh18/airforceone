@@ -41,13 +41,6 @@ class AFOControls {
         this.rotationVector = new Vector3(0, 0, 0);
 
         // event listeners
-        // const _mousemove = bind(this, this.mousemove);
-        // const _mousedown = bind(this, this.mousedown);
-        // const _mouseup = bind(this, this.mouseup);
-        // this.domElement.addEventListener('mousemove', _mousemove, false);
-        // this.domElement.addEventListener('mousedown', _mousedown, false);
-        // this.domElement.addEventListener('mouseup', _mouseup, false);
-
         const _keydown = this.bind(this, this.keydown);
         const _keyup = this.bind(this, this.keyup);
         window.addEventListener('keydown', _keydown, false);
@@ -116,81 +109,6 @@ class AFOControls {
         this.updateRotationVector();
     }
 
-    mousedown(event) {
-
-        if (this.domElement !== document) {
-
-            this.domElement.focus();
-
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (this.dragToLook) {
-
-            this.mouseStatus++;
-
-        } else {
-
-            switch (event.button) {
-
-                case 0: this.moveState.forward = 1; break;
-                case 2: this.moveState.back = 1; break;
-
-            }
-
-            this.updateMovementVector();
-
-        }
-
-    }
-
-    mousemove(event) {
-
-        if (!this.dragToLook || this.mouseStatus > 0) {
-
-            const container = this.getContainerDimensions();
-            const halfWidth = container.size[0] / 2;
-            const halfHeight = container.size[1] / 2;
-
-            this.moveState.yawLeft = - ((event.pageX - container.offset[0]) - halfWidth) / halfWidth;
-            this.moveState.pitchDown = ((event.pageY - container.offset[1]) - halfHeight) / halfHeight;
-
-            this.updateRotationVector();
-
-        }
-
-    }
-
-    mouseup(event) {
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (this.dragToLook) {
-
-            this.mouseStatus--;
-
-            this.moveState.yawLeft = this.moveState.pitchDown = 0;
-
-        } else {
-
-            switch (event.button) {
-
-                case 0: this.moveState.forward = 0; break;
-                case 2: this.moveState.back = 0; break;
-
-            }
-
-            this.updateMovementVector();
-
-        }
-
-        this.updateRotationVector();
-
-    }
-
     update(delta) {
         const moveMult = delta * this.movementSpeed;
         const rotMult = delta * this.rollSpeed;
@@ -246,10 +164,6 @@ class AFOControls {
 
     dispose(_keydown, _keyup) {
         this.domElement.removeEventListener('contextmenu', contextmenu, false);
-        // this.domElement.removeEventListener('mousedown', _mousedown, false);
-        // this.domElement.removeEventListener('mousemove', _mousemove, false);
-        // this.domElement.removeEventListener('mouseup', _mouseup, false);
-
         window.removeEventListener('keydown', _keydown, false);
         window.removeEventListener('keyup', _keyup, false);
     }
