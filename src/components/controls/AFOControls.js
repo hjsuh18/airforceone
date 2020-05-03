@@ -41,10 +41,10 @@ class AFOControls {
         this.rotationVector = new Vector3(0, 0, 0);
 
         // event listeners
-        const _keydown = this.bind(this, this.keydown);
-        const _keyup = this.bind(this, this.keyup);
-        window.addEventListener('keydown', _keydown, false);
-        window.addEventListener('keyup', _keyup, false);
+        const keydown = bind(this, this.keydown);
+        const keyup = bind(this, this.keyup);
+        window.addEventListener('keydown', keydown, false);
+        window.addEventListener('keyup', keyup, false);
 
         this.domElement.addEventListener('contextmenu', contextmenu, false);
 
@@ -156,17 +156,17 @@ class AFOControls {
         }
     }
 
-    bind(scope, fn) {
-        return function() {
-            fn.apply(scope, arguments);
-        };
-    }
-
     dispose(_keydown, _keyup) {
         this.domElement.removeEventListener('contextmenu', contextmenu, false);
         window.removeEventListener('keydown', _keydown, false);
         window.removeEventListener('keyup', _keyup, false);
     }
+}
+
+function bind(scope, fn) {
+    return function() {
+        fn.apply(scope, arguments);
+    };
 }
 
 function contextmenu(event) {
