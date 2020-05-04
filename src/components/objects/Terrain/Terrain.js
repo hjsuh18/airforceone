@@ -6,8 +6,16 @@ import {
     Vector3,
 } from 'three';
 
+/**
+ * Terrain is made of many threejs planes joined together. Each plane is made of
+ * many mesh primitives.
+ * Perlin noise is used to set height of each vertex in mesh to simulate a rough
+ * terrain-like surface.
+ * As the passed in object moves, more terrain is generated procedurally to
+ * simulate the illusion of an infinite terrain.
+ */
 class Terrain extends Group {
-    constructor() {
+    constructor(object) {
         // Call parent Group() constructor
         super();
         this.name = 'terrain';

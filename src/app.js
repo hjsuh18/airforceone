@@ -11,13 +11,17 @@ import { AFOControls } from 'controls';
 import { SeedScene } from 'scenes';
 
 // Initialize core ThreeJS components
-const scene = new SeedScene();
 const camera = new PerspectiveCamera();
+const scene = new SeedScene(camera);
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-camera.position.set(6, 3, -10);
-camera.lookAt(new Vector3(0, 0, 0));
+const CAMERA_HEIGHT = 100;
+const CAMERA_FAR = 4000;
+camera.position.set(0, 0, CAMERA_HEIGHT);
+camera.far = CAMERA_FAR;
+camera.lookAt(new Vector3(1, 0, CAMERA_HEIGHT));
+camera.rotateOnAxis(new Vector3(0, 0, -1), Math.PI / 2);
 
 // Set up renderer, canvas, and minor CSS adjustments
 renderer.setPixelRatio(window.devicePixelRatio);

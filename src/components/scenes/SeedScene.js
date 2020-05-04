@@ -3,7 +3,7 @@ import { BasicLights } from 'lights';
 import { Terrain } from 'objects';
 
 class SeedScene extends Scene {
-    constructor() {
+    constructor(camera) {
         // Call parent Scene() constructor
         super();
 
@@ -12,14 +12,15 @@ class SeedScene extends Scene {
             updateList: [],
         };
 
-        // Set background to a nice color
+        // Set background to a sky blue
         this.background = new Color(0x7ec0ee);
 
         // Add meshes to scene
         const lights = new BasicLights();
-        const terrain = new Terrain();
+        const terrain = new Terrain(camera);
         this.add(lights);
         this.add(terrain);
+        this.addToUpdateList(terrain);
     }
 
     addToUpdateList(object) {
