@@ -1,5 +1,4 @@
-import { Scene, Color } from 'three';
-import { BasicLights } from 'lights';
+import { Scene, Color, DirectionalLight } from 'three';
 import { Terrain } from 'objects';
 
 class SeedScene extends Scene {
@@ -16,9 +15,10 @@ class SeedScene extends Scene {
         this.background = new Color(0x7ec0ee);
 
         // Add meshes to scene
-        const lights = new BasicLights();
+        const light = new DirectionalLight(0xffffff, 1);
+        light.position.set(0, 0, 1);
         const terrain = new Terrain(camera);
-        this.add(lights);
+        this.add(light);
         this.add(terrain);
         this.addToUpdateList(terrain);
     }
