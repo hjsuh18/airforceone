@@ -25,15 +25,16 @@ class Terrain extends Group {
         this.planes = {}; // string(planeCoordinates) -> {coords, geometry}
 
         // magic numbers
-        this.UNIT_WIDTH = 300; // width of single mesh segment
-        this.UNIT_HEIGHT = 300; // height of single mesh segment
-        this.PLANE_WIDTH = 10; // # mesh segments in width of unit plane
-        this.PLANE_HEIGHT = 10; // # mesh segments in height of unit plane
-        this.TERRAIN_MIN_WIDTH = 2; // # planes left/right of current position
-        this.TERRAIN_MIN_HEIGHT = 2; // # planes front/behind current position
-        this.TERRAIN_MAX_WIDTH = 4; // # planes beyond which are disposed
-        this.TERRAIN_MAX_HEIGHT = 4; // # planes beyond which are disposed
-        this.TERRAIN_MAX_Z = 500;
+        this.UNIT_WIDTH = 1000; // width of single mesh segment
+        this.UNIT_HEIGHT = 1000; // height of single mesh segment
+        this.PLANE_WIDTH = 100; // # mesh segments in width of unit plane
+        this.PLANE_HEIGHT = 100; // # mesh segments in height of unit plane
+        this.TERRAIN_MIN_WIDTH = 1; // # planes left/right of current position
+        this.TERRAIN_MIN_HEIGHT = 1; // # planes front/behind current position
+        this.TERRAIN_MAX_WIDTH = 2; // # planes beyond which are disposed
+        this.TERRAIN_MAX_HEIGHT = 2; // # planes beyond which are disposed
+        this.TERRAIN_MAX_Z = 5000;
+        this.ROUGHNESS = 0.0005;
         this.MESH_COLOR = 0x228b22; // forest green
 
         const currentPlane = this.positionToPlaneCoords(object.position);
@@ -120,7 +121,9 @@ class Terrain extends Group {
         );
         geometry.vertices.forEach((v) => {
             v.add(translate);
-            v.z = p5.prototype.noise(v.x, v.y) * this.TERRAIN_MAX_Z;
+            v.z = p5.prototype.noise(
+                v.x * this.ROUGHNESS, v.y * this.ROUGHNESS
+            ) * this.TERRAIN_MAX_Z;
         });
         // TODO: use more terrain like material
         const material = new MeshPhongMaterial({

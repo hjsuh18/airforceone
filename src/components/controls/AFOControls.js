@@ -31,10 +31,9 @@ class AFOControls {
         }
 
         // API
-        this.movementSpeed = 1.0;
+        this.movementSpeed = 100.0;
         this.rollSpeed = 0.005;
-        this.dragToLook = false;
-        this.autoForward = false;
+        this.autoForward = true;
 
         // internals
         this.tmpQuaternion = new Quaternion();
