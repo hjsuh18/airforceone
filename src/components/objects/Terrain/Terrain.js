@@ -2,7 +2,8 @@ import {
     Group,
     Mesh,
     PlaneGeometry,
-    MeshBasicMaterial,
+    MeshPhongMaterial,
+    FlatShading,
     Vector3,
 } from 'three';
 import p5 from 'p5';
@@ -33,6 +34,7 @@ class Terrain extends Group {
         this.TERRAIN_MAX_WIDTH = 4; // # planes beyond which are disposed
         this.TERRAIN_MAX_HEIGHT = 4; // # planes beyond which are disposed
         this.TERRAIN_MAX_Z = 500;
+        this.MESH_COLOR = 0x228b22; // forest green
 
         const currentPlane = this.positionToPlaneCoords(object.position);
         for (
@@ -121,7 +123,10 @@ class Terrain extends Group {
             v.z = p5.prototype.noise(v.x, v.y) * this.TERRAIN_MAX_Z;
         });
         // TODO: use more terrain like material
-        const material = new MeshBasicMaterial({wireframe: true});
+        const material = new MeshPhongMaterial({
+            color: this.MESH_COLOR,
+            shading: FlatShading
+        });
         const p = new Mesh(geometry, material);
         this.add(p);
         this.planes[[x, y]] = {
