@@ -5,6 +5,7 @@ import {
     MeshBasicMaterial,
     Vector3,
 } from 'three';
+import p5 from 'p5';
 
 /**
  * Terrain is made of many threejs planes joined together. Each plane is made of
@@ -31,6 +32,7 @@ class Terrain extends Group {
         this.TERRAIN_MIN_HEIGHT = 2; // # planes front/behind current position
         this.TERRAIN_MAX_WIDTH = 4; // # planes beyond which are disposed
         this.TERRAIN_MAX_HEIGHT = 4; // # planes beyond which are disposed
+        this.TERRAIN_MAX_Z = 500;
 
         const currentPlane = this.positionToPlaneCoords(object.position);
         for (
@@ -114,7 +116,10 @@ class Terrain extends Group {
             this.PLANE_WIDTH,
             this.PLANE_HEIGHT
         );
-        geometry.vertices.forEach((v) => v.add(translate));
+        geometry.vertices.forEach((v) => {
+            v.add(translate);
+            v.z = p5.prototype.noise(v.x, v.y) * this.TERRAIN_MAX_Z;
+        });
         // TODO: use more terrain like material
         const material = new MeshBasicMaterial({wireframe: true});
         const p = new Mesh(geometry, material);

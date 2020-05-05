@@ -16,7 +16,7 @@ const scene = new SeedScene(camera);
 const renderer = new WebGLRenderer({ antialias: true });
 
 // Set up camera
-const CAMERA_HEIGHT = 100;
+const CAMERA_HEIGHT = 600;
 const CAMERA_FAR = 4000;
 camera.position.set(0, 0, CAMERA_HEIGHT);
 camera.far = CAMERA_FAR;
