@@ -1,10 +1,11 @@
 import { Scene, Color, DirectionalLight } from 'three';
-import { Terrain } from 'objects';
+import { Terrain, Airplane } from 'objects';
 
 class SeedScene extends Scene {
     constructor(camera) {
         // Call parent Scene() constructor
         super();
+        this.camera = camera;
 
         // Init state
         this.updateList = [];
@@ -17,9 +18,12 @@ class SeedScene extends Scene {
         const light = new DirectionalLight(0xffffff, 1);
         light.position.set(0, 0, 1);
         const terrain = new Terrain(camera);
+        const airplane = new Airplane(camera);
         this.add(light);
         this.add(terrain);
+        this.add(airplane);
         this.addToUpdateList(terrain);
+        this.addToUpdateList(airplane);
         this.addToCollidableList(terrain);
     }
 
