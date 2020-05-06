@@ -9,6 +9,7 @@
 import { WebGLRenderer, PerspectiveCamera, Vector3 } from 'three';
 import { AFOControls } from 'controls';
 import { SeedScene } from 'scenes';
+export { collisionHandler };
 
 // Initialize core ThreeJS components
 const camera = new PerspectiveCamera();
@@ -39,8 +40,9 @@ controls.update(delta);
 // Render loop
 const onAnimationFrameHandler = (timeStamp) => {
     controls.update(delta);
-    renderer.render(scene, camera);
+    scene.handleCollision(camera.position);
     scene.update && scene.update(timeStamp);
+    renderer.render(scene, camera);
     window.requestAnimationFrame(onAnimationFrameHandler);
 };
 window.requestAnimationFrame(onAnimationFrameHandler);
@@ -54,3 +56,7 @@ const windowResizeHandler = () => {
 };
 windowResizeHandler();
 window.addEventListener('resize', windowResizeHandler, false);
+
+const collisionHandler = () => {
+    console.log("there is a collision");
+};

@@ -7,9 +7,8 @@ class SeedScene extends Scene {
         super();
 
         // Init state
-        this.state = {
-            updateList: [],
-        };
+        this.updateList = [];
+        this.collidableList = [];
 
         // Set background to a sky blue
         this.background = new Color(0x7ec0ee);
@@ -21,18 +20,31 @@ class SeedScene extends Scene {
         this.add(light);
         this.add(terrain);
         this.addToUpdateList(terrain);
+        this.addToCollidableList(terrain);
     }
 
     addToUpdateList(object) {
-        this.state.updateList.push(object);
+        this.updateList.push(object);
+    }
+
+    addToCollidableList(object) {
+        this.collidableList.push(object);
     }
 
     update(timeStamp) {
-        const { updateList } = this.state;
-
         // Call update for each object in the updateList
-        for (const obj of updateList) {
+        for (const obj of this.updateList) {
             obj.update(timeStamp);
+        }
+    }
+
+    /**
+     * Appropriately handle collisions with every object in this scene
+     * @param {Vector3} position
+     */
+    handleCollision(position) {
+        for (const obj of this.collidableList) {
+            obj.handleCollision && obj.handleCollision(position);
         }
     }
 }

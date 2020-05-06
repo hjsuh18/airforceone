@@ -6,6 +6,7 @@ import {
     Vector3,
 } from 'three';
 import p5 from 'p5';
+import { collisionHandler } from 'app';
 
 /**
  * Terrain is made of many threejs planes joined together. Each plane is made of
@@ -88,6 +89,74 @@ class Terrain extends Group {
     /* eslint-enable no-unused-vars */
 
     /**
+     * Detect collision and call app.js function for handling
+     * It is assumed that airplane starts flight above terrain, therefore it is
+     * a collision if position is below the terrain.
+     * @param {Vector3} position
+     */
+    handleCollision(position) {
+        // find height of plane at (position.x, position.y)
+        let verts = [];
+        const currentPlane = this.positionToPlaneCoords(position);
+        const planeX = position.x -
+            currentPlane[0] * this.UNIT_WIDTH * this.PLANE_WIDTH;
+        const planeY = position.y -
+            currentPlane[1] * this.UNIT_HEIGHT * this.PLANE_HEIGHT;
+        const vertexX = Math.floor(planeX / this.UNIT_WIDTH);
+        const vertexY = Math.floor(planeY / this.UNIT_HEIGHT);
+        const entry = Object.entries(this.planes).find((v) => {
+            const coords = v[1].coords;
+            if (
+                coords[0] === currentPlane[0] &&
+                coords[1] === currentPlane[1]
+            ) {
+                return true;
+            }
+            return false;
+        });
+        const geometry = (entry != null) && entry[1].geometry;
+        if (geometry == null) {
+            console.warn("Camera outside terrain range.");
+            return;
+        }
+        const bottomLeftIndex = (this.PLANE_HEIGHT - vertexY) *
+            (this.PLANE_WIDTH + 1) + vertexX;
+        const bottomRightIndex = (this.PLANE_HEIGHT - vertexY) *
+            (this.PLANE_WIDTH + 1) + vertexX + 1;
+        const topLeftIndex = (this.PLANE_HEIGHT - (vertexY + 1)) *
+            (this.PLANE_WIDTH + 1) + vertexX;
+        const topRightIndex = (this.PLANE_HEIGHT - (vertexY + 1)) *
+            (this.PLANE_WIDTH + 1) + vertexX + 1;
+        verts.push(bottomLeftIndex);
+        verts.push(topRightIndex);
+        if (
+            planeX - vertexX * this.UNIT_WIDTH >
+            planeY - vertexY * this.UNIT_HEIGHT
+        ) {
+            verts.push(bottomRightIndex);
+        } else {
+            verts.push(topLeftIndex);
+        }
+        verts = verts.map((index) => {
+            if (index < 0 || index >= geometry.vertices.length) {
+                return null;
+            }
+            return geometry.vertices[index];
+        });
+        const baryCoords = computeBarycentric(verts, position);
+        if (baryCoords == null) {
+            console.warn("Error in mesh position calculations.");
+            return;
+        }
+        const planeHeight = verts.reduce(
+            (total, v, i) => total + v.z * baryCoords[i]
+        , 0);
+        if (planeHeight >= position.z) {
+            collisionHandler();
+        }
+    }
+
+    /**
      * Converts real world coordinates to "plane-coordinates", where unit is a
      * unit plane.
      * @param {Vector3} position
@@ -108,8 +177,10 @@ class Terrain extends Group {
      */
     addPlane(x, y) {
         const translate = new Vector3(
-            x * this.UNIT_WIDTH * this.PLANE_WIDTH,
-            y * this.UNIT_HEIGHT * this.PLANE_HEIGHT,
+            x * this.UNIT_WIDTH * this.PLANE_WIDTH + this.UNIT_WIDTH *
+            this.PLANE_WIDTH / 2,
+            y * this.UNIT_HEIGHT * this.PLANE_HEIGHT + this.UNIT_HEIGHT *
+            this.PLANE_HEIGHT / 2,
             0
         );
         const geometry = new PlaneGeometry(
@@ -136,6 +207,59 @@ class Terrain extends Group {
             geometry: geometry
         };
     }
+}
+
+/**
+ * Returns the output of the edge function of edge v0v1 with respect to
+ * point p. Description of edge function can be found on
+ * https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspiracy/
+ * @param {Vector3} p
+ * @param {Vector3} v0
+ * @param {Vector3} v1
+ */
+function edgeFunction(p, v0, v1) {
+    return (v0.y - v1.y) * p.x +
+        (v1.x - v0.x) * p.y +
+        (v0.x * v1.y - v0.y * v1.x);
+}
+
+/**
+ * Returns barycentric coordinates of p where triangle is defined by
+ * vertices in verts. Returns null if verts contains null value or if p outside
+ * triangle.
+ * (see https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspiracy/)
+ * @param {array} verts
+ * @param {Vector3} p
+ * @param {array} barycentricCoords
+ */
+function computeBarycentric(verts, p) {
+    let triCoords = [];
+    const v0 = verts[0];
+    let v1 = verts[1];
+    let v2 = verts[2];
+    if (v0 == null || v1 == null || v2 == null) {
+        return null;
+    }
+
+    // check that 0-1-2 is counter-clockwise. If not swap v1 and v2
+    const det = (v1.x - v0.x) * (v2.y - v0.y) - (v2.x - v0.x) * (v1.y - v0.y);
+    if (det < 0.0) {
+        const t = v1;
+        v1 = v2;
+        v2 = t;
+    }
+    const f01 = edgeFunction(p, v0, v1);
+    const f12 = edgeFunction(p, v1, v2);
+    const f20 = edgeFunction(p, v2, v0);
+    if (f01 < 0.0 || f12 < 0.0 || f20 < 0.0) {
+        return undefined;
+    }
+    const sum = f01 + f12 + f20;
+    triCoords[0] = f12;
+    triCoords[1] = (det < 0.0) ? f01 : f20;
+    triCoords[2] = (det < 0.0) ? f20 : f01;
+    triCoords = triCoords.map((c) => c / sum);
+    return triCoords;
 }
 
 export default Terrain;
