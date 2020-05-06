@@ -1,42 +1,39 @@
-import { Group } from 'three';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import MODEL from './airplane-model.obj';
-import MAT from './airplane-materials.mtl';
-import * as Dat from 'dat.gui';
+import { Group, Vector3, Quaternion } from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import MODEL from './assets/Airplane.gltf';
 
 /**
  * Imports and loads mesh of airplane, using downloaded .obj and .mtl files.
- * Code taken and adapted from Kevin Finch's piazza post note @527 in Princeton
- * COS 426 spring 2020 course.
- * Acknowledgements: airplane-model.obj, airplane-materials.mtl
- *  Name: Boeing 747
- *  Author: Miha Lunar
- *  Source: https://poly.google.com/view/49CLof4tP2V
+ * Acknowledgements: Airplane.{gltf, bin}, Airplane Texture.jpg
+ *  Name: Airplane
+ *  Author: Poly By Google
+ *  Source: https://poly.google.com/view/8ciDd9k8wha
  *  License: CC-BY
  */
 class Airplane extends Group {
     constructor(camera) {
         super();
         this.camera = camera;
+        this.cameraPositionOffset = new Vector3(0, -3, -15);
+        this.cameraRotateOffset = new Quaternion(0, Math.PI, 0);
+        const scale = 0.01;
 
-        const loader = new OBJLoader();
-        const mtlLoader = new MTLLoader();
-        this.name = 'airplane';
-        mtlLoader.setResourcePath('src/components/objects/Airplane/');
-        mtlLoader.load(MAT, (material) => {
-          material.preload();
-          loader.setMaterials(material).load(MODEL, (obj) => {
-            this.add(obj);
-          });
-        });
+        const loader = new GLTFLoader();
+        loader.setResourcePath('src/components/objects/Airplane/assets/');
+        loader.load(MODEL, (gltf) => this.add(gltf.scene));
+        this.scale.multiplyScalar(scale);
     }
 
     /* eslint-disable no-unused-vars */
     update(timeStamp) {
         this.position.copy(this.camera.position);
         this.quaternion.copy(this.camera.quaternion);
-        this.translateZ(-1);
+        this.translateX(this.cameraPositionOffset.x);
+        this.translateY(this.cameraPositionOffset.y);
+        this.translateZ(this.cameraPositionOffset.z);
+        this.rotateX(this.cameraRotateOffset.x);
+        this.rotateY(this.cameraRotateOffset.y);
+        this.rotateZ(this.cameraRotateOffset.z);
     }
     /* eslint-enable no-unused-vars */
 }

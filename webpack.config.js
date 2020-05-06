@@ -1,6 +1,7 @@
 const path = require('path');
 const pkg = require('./package.json');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const buildPath = './build/';
 
 module.exports = {
@@ -51,5 +52,11 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({ title: pkg.title, favicon: 'src/favicon.ico' }),
+        new CopyPlugin([
+            {
+                from: 'src/components/objects/Airplane/assets/',
+                to: 'src/components/objects/Airplane/assets/'
+            }
+        ]),
     ],
 };

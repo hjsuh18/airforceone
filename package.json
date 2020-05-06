@@ -18,6 +18,7 @@
     "deploy": "npm run prebuild && webpack --mode production && gh-pages -d build"
   },
   "dependencies": {
+    "copy-webpack-plugin": "^5.1.1",
     "dat.gui": "^0.7.7",
     "p5": "^1.0.0",
     "three": "^0.115.0",
