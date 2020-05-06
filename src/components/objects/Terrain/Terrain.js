@@ -3,7 +3,6 @@ import {
     Mesh,
     PlaneGeometry,
     MeshPhongMaterial,
-    FlatShading,
     Vector3,
 } from 'three';
 import p5 from 'p5';
@@ -128,7 +127,7 @@ class Terrain extends Group {
         // TODO: use more terrain like material
         const material = new MeshPhongMaterial({
             color: this.MESH_COLOR,
-            shading: FlatShading
+            flatShading: true
         });
         const p = new Mesh(geometry, material);
         this.add(p);
