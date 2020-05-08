@@ -1,4 +1,4 @@
-import { Group, Vector3, Quaternion } from 'three';
+import { Group, Quaternion } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import MODEL from './assets/Airplane.gltf';
 
@@ -11,10 +11,10 @@ import MODEL from './assets/Airplane.gltf';
  *  License: CC-BY
  */
 class Airplane extends Group {
-    constructor(camera) {
+    constructor(camera, cameraPositionOffset) {
         super();
         this.camera = camera;
-        this.cameraPositionOffset = new Vector3(0, -3, -15);
+        this.cameraPositionOffset = cameraPositionOffset;
         this.cameraRotateOffset = new Quaternion(0, Math.PI, 0);
         const scale = 0.01;
 

@@ -1,4 +1,4 @@
-import { Scene, Color, DirectionalLight } from 'three';
+import { Vector3, Scene, Color, DirectionalLight } from 'three';
 import { Terrain, Airplane } from 'objects';
 
 class SeedScene extends Scene {
@@ -17,8 +17,9 @@ class SeedScene extends Scene {
         // Add meshes to scene
         const light = new DirectionalLight(0xffffff, 1);
         light.position.set(0, 0, 1);
+        this.cameraPositionOffset = new Vector3(0, -3, -15);
         const terrain = new Terrain(camera);
-        const airplane = new Airplane(camera);
+        const airplane = new Airplane(camera, this.cameraPositionOffset);
         this.add(light);
         this.add(terrain);
         this.add(airplane);
@@ -47,8 +48,10 @@ class SeedScene extends Scene {
      * @param {Vector3} position
      */
     handleCollision(position) {
+        const airplanePos = position.clone().add(this.cameraPositionOffset);
+        airplanePos.add(new Vector3(0, 0, -10)); // collision buffer
         for (const obj of this.collidableList) {
-            obj.handleCollision && obj.handleCollision(position);
+            obj.handleCollision && obj.handleCollision(airplanePos);
         }
     }
 }
