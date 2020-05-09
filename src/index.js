@@ -114,6 +114,5 @@ const html = `
 </style>
 `;
 
-const game = new Game();
-game.bindSpace();
+new Game();
 document.body.innerHTML = html;

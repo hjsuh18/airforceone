@@ -56,6 +56,8 @@ class Game {
             };
             this.windowResizeHandler();
             window.addEventListener('resize', this.windowResizeHandler, false);
+
+            this.bindSpace();
         });
     }
 
