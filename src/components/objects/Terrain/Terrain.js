@@ -6,7 +6,6 @@ import {
     Vector3,
 } from 'three';
 import p5 from 'p5';
-import { collisionHandler } from 'app';
 
 /**
  * Terrain is made of many threejs planes joined together. Each plane is made of
@@ -43,8 +42,11 @@ class Terrain extends Group {
         this.TERRAIN_MAX_Z = 5000;
         this.ROUGHNESS = 0.0005;
         this.MESH_COLOR = 0x228b22; // forest green
+        this.init();
+    }
 
-        const currentPlane = this.positionToPlaneCoords(object.position);
+    init() {
+        const currentPlane = this.positionToPlaneCoords(this.object.position);
         for (
             let i = - this.TERRAIN_MIN_WIDTH;
             i <= this.TERRAIN_MIN_WIDTH;
@@ -58,6 +60,11 @@ class Terrain extends Group {
                 this.addPlane(currentPlane[0] + i, currentPlane[1] + j);
             }
         }
+    }
+
+    reset() {
+        Object.entries(this.planes).forEach((v) => v[1].geometry.dispose());
+        this.init();
     }
 
     /* eslint-disable no-unused-vars */

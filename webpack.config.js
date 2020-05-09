@@ -5,7 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const buildPath = './build/';
 
 module.exports = {
-    entry: ['./src/app.js'],
+    entry: ['./src/index.js'],
     output: {
         path: path.join(__dirname, buildPath),
         filename: '[name].[hash].js',
@@ -46,8 +46,7 @@ module.exports = {
         alias: {
             objects$: path.resolve(__dirname, 'src/components/objects'),
             scenes$: path.resolve(__dirname, 'src/components/scenes'),
-            controls$: path.resolve(__dirname, 'src/components/controls'),
-            app$: path.resolve(__dirname, 'src/app.js'),
+            controls$: path.resolve(__dirname, 'src/components/controls')
         },
     },
     plugins: [

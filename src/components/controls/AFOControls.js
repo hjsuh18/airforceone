@@ -31,7 +31,7 @@ class AFOControls {
         }
 
         // API
-        this.movementSpeed = 100.0;
+        this.movementSpeed = 0.0;
         this.rollSpeed = 0.005;
         this.autoForward = true;
 
@@ -65,6 +65,10 @@ class AFOControls {
 
         this.updateMovementVector();
         this.updateRotationVector();
+    }
+
+    move() {
+        this.movementSpeed = 100.0;
     }
 
     keydown(event) {

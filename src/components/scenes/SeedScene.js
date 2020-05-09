@@ -51,6 +51,10 @@ class SeedScene extends Scene {
         }
     }
 
+    reset() {
+        this.terrain.reset();
+    }
+
     /**
      * Appropriately handle collisions with every object in this scene
      * @param {Vector3} position
