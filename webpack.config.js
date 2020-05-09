@@ -46,7 +46,8 @@ module.exports = {
         alias: {
             objects$: path.resolve(__dirname, 'src/components/objects'),
             scenes$: path.resolve(__dirname, 'src/components/scenes'),
-            controls$: path.resolve(__dirname, 'src/components/controls')
+            controls$: path.resolve(__dirname, 'src/components/controls'),
+            helpers$: path.resolve(__dirname, 'src/components/helpers')
         },
     },
     plugins: [
