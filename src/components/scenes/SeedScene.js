@@ -2,7 +2,13 @@ import { Vector3, Scene, Color, DirectionalLight } from 'three';
 import { Terrain, Airplane } from 'objects';
 
 class SeedScene extends Scene {
-    constructor(camera) {
+    /**
+     * Scene with infinite terrain and airplane
+     * @param {Camera} camera
+     * @param {Game} game: optional parameter to allow functionality to make
+     * game wait until scene is fully loaded
+     */
+    constructor(camera, game) {
         // Call parent Scene() constructor
         super();
         this.camera = camera;
@@ -17,15 +23,17 @@ class SeedScene extends Scene {
         // Add meshes to scene
         const light = new DirectionalLight(0xffffff, 1);
         light.position.set(0, 0, 1);
+
+        // offset location of object we are following with camera
         this.cameraPositionOffset = new Vector3(0, -3, -15);
-        const terrain = new Terrain(camera);
-        const airplane = new Airplane(camera, this.cameraPositionOffset);
+        this.terrain = new Terrain(camera, game);
+        this.airplane = new Airplane(camera, this.cameraPositionOffset, game);
         this.add(light);
-        this.add(terrain);
-        this.add(airplane);
-        this.addToUpdateList(terrain);
-        this.addToUpdateList(airplane);
-        this.addToCollidableList(terrain);
+        this.add(this.terrain);
+        this.add(this.airplane);
+        this.addToUpdateList(this.terrain);
+        this.addToUpdateList(this.airplane);
+        this.addToCollidableList(this.terrain);
     }
 
     addToUpdateList(object) {

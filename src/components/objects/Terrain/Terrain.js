@@ -17,11 +17,18 @@ import { collisionHandler } from 'app';
  * simulate the illusion of an infinite terrain.
  */
 class Terrain extends Group {
-    constructor(object) {
+    /**
+     * Initialize minimum size terrain around object's position
+     * @param {*} object
+     * @param {Game} game: optional parameter to allow functionality to handle
+     * collision with terrain in context of game
+     */
+    constructor(object, game) {
         // Call parent Group() constructor
         super();
         this.name = 'terrain';
         this.object = object;
+        this.game = game;
         this.planes = {}; // string(planeCoordinates) -> {coords, geometry}
 
         // magic numbers
@@ -152,7 +159,7 @@ class Terrain extends Group {
             (total, v, i) => total + v.z * baryCoords[i]
         , 0);
         if (planeHeight >= position.z) {
-            collisionHandler();
+            this.game && this.game.collisionHandler();
         }
     }
 

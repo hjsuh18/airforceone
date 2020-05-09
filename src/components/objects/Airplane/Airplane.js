@@ -1,6 +1,6 @@
 import { Group, Quaternion } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import MODEL from './assets/Airplane.gltf';
+import MODEL from './Airplane.gltf';
 
 /**
  * Imports and loads mesh of airplane, using downloaded .obj and .mtl files.
@@ -11,7 +11,14 @@ import MODEL from './assets/Airplane.gltf';
  *  License: CC-BY
  */
 class Airplane extends Group {
-    constructor(camera, cameraPositionOffset) {
+    /**
+     * Airplane mesh that follows the camera position + cameraPositionOffset
+     * @param {Camera} camera
+     * @param {Vector3} cameraPositionOffset
+     * @param {Game} game: optional parameter to allow functionality to make
+     * game wait until plane is fully loaded
+     */
+    constructor(camera, cameraPositionOffset, game) {
         super();
         this.camera = camera;
         this.cameraPositionOffset = cameraPositionOffset;
@@ -19,8 +26,15 @@ class Airplane extends Group {
         const scale = 0.01;
 
         const loader = new GLTFLoader();
-        loader.setResourcePath('src/components/objects/Airplane/assets/');
-        loader.load(MODEL, (gltf) => this.add(gltf.scene));
+        loader.setResourcePath('assets/');
+        /* eslint-disable no-unused-vars */
+        game.promise = new Promise((resolve) => {
+            loader.load(MODEL, (gltf) => {
+                this.add(gltf.scene);
+                resolve();
+            }, (request) => {});
+        });
+        /* eslint-enable no-unused-vars */
         this.scale.multiplyScalar(scale);
     }
 

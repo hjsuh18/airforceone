@@ -54,8 +54,8 @@ module.exports = {
         new HtmlWebpackPlugin({ title: pkg.title, favicon: 'src/favicon.ico' }),
         new CopyPlugin([
             {
-                from: 'src/components/objects/Airplane/assets/',
-                to: 'src/components/objects/Airplane/assets/'
+                from: 'assets/',
+                to: 'assets/'
             }
         ]),
     ],
