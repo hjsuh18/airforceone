@@ -15,7 +15,7 @@ class Game {
         // initialized and resolved in Airplane.js when airplane is fully loaded
         this.promise = null;
 
-        this.points = 1000; // TODO: placeholder
+        this.points = 0;
 
         // Initialize core ThreeJS components
         this.camera = new PerspectiveCamera();
@@ -86,15 +86,28 @@ class Game {
         $('.container-end').css('opacity', 0.0);
     }
 
-    collisionHandler() {
+    collisionHandler(id) {
+        let message = 'You crashed';
+        switch (id) {
+            case 0: // fuel
+                this.points += 100;
+                return;
+            case 1: // terrain
+                message = message + ' into the ground!';
+                break;
+            case 2: // cloud
+                message = message + ' into a cloud!';
+                break;
+        }
         this.canvas.style.display = 'none';
         $('.container-end').css('opacity', 1.0);
-        $('.game-over-message').text('You crashed!');
+        $('.game-over-message').text(message);
         $('.game-over-points').text('Points: ' + this.points);
         this.reset();
     }
 
     reset() {
+        this.points = 0;
         this.scene.reset();
         this.initCamera();
         this.controls = new AFOControls(this.camera, this.canvas);
