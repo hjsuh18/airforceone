@@ -32,6 +32,7 @@ class AFOControls {
 
         // API
         this.movementSpeed = 0.0;
+        this.movementSpeedMultiplier = 1.0;
         this.rollSpeed = 0.005;
         this.autoForward = true;
 
@@ -78,16 +79,16 @@ class AFOControls {
         //event.preventDefault();
 
         switch (event.keyCode) {
-            case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
+            case 16: /* shift */ this.movementSpeedMultiplier = 1.5; break;
 
-            case 87: /*W*/ this.moveState.forward = 1; break;
-            case 83: /*S*/ this.moveState.back = 1; break;
+            // case 87: /*W*/ this.moveState.forward = 1; break;
+            // case 83: /*S*/ this.moveState.back = 1; break;
 
-            case 65: /*A*/ this.moveState.left = 1; break;
-            case 68: /*D*/ this.moveState.right = 1; break;
+            // case 65: /*A*/ this.moveState.left = 1; break;
+            // case 68: /*D*/ this.moveState.right = 1; break;
 
-            case 82: /*R*/ this.moveState.up = 1; break;
-            case 70: /*F*/ this.moveState.down = 1; break;
+            // case 82: /*R*/ this.moveState.up = 1; break;
+            // case 70: /*F*/ this.moveState.down = 1; break;
 
             case 38: /*up*/ this.moveState.pitchUp = 1; break;
             case 40: /*down*/ this.moveState.pitchDown = 1; break;
@@ -106,14 +107,14 @@ class AFOControls {
         switch (event.keyCode) {
             case 16: /* shift */ this.movementSpeedMultiplier = 1; break;
 
-            case 87: /*W*/ this.moveState.forward = 0; break;
-            case 83: /*S*/ this.moveState.back = 0; break;
+            // case 87: /*W*/ this.moveState.forward = 0; break;
+            // case 83: /*S*/ this.moveState.back = 0; break;
 
-            case 65: /*A*/ this.moveState.left = 0; break;
-            case 68: /*D*/ this.moveState.right = 0; break;
+            // case 65: /*A*/ this.moveState.left = 0; break;
+            // case 68: /*D*/ this.moveState.right = 0; break;
 
-            case 82: /*R*/ this.moveState.up = 0; break;
-            case 70: /*F*/ this.moveState.down = 0; break;
+            // case 82: /*R*/ this.moveState.up = 0; break;
+            // case 70: /*F*/ this.moveState.down = 0; break;
 
             case 38: /*up*/ this.moveState.pitchUp = 0; break;
             case 40: /*down*/ this.moveState.pitchDown = 0; break;
@@ -129,7 +130,8 @@ class AFOControls {
     }
 
     update(delta) {
-        const moveMult = delta * this.movementSpeed;
+        const moveMult = delta * this.movementSpeed *
+            this.movementSpeedMultiplier;
         const rotMult = delta * this.rollSpeed;
 
         this.object.translateX(this.moveVector.x * moveMult);
