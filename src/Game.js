@@ -16,6 +16,11 @@ class Game {
         this.promise = null;
 
         this.points = 0;
+        this.fuel = 100;
+
+        setInterval(() => {
+            $('.score').text('Score: ' + this.points);
+        }, 100);
 
         // Initialize core ThreeJS components
         this.camera = new PerspectiveCamera();
@@ -84,13 +89,29 @@ class Game {
         this.canvas.style.display = 'block'; // Removes padding below canvas
         $('.container-start').css('opacity', 0.0);
         $('.container-end').css('opacity', 0.0);
+        $('.container-score').css('opacity', 1.0);
+
+        let decrement = 2;
+        let threshold = 1000;
+        const fuelIntervalId = setInterval(() => {
+            if (this.fuel <= 0) {
+                this.endGame("You ran out of fuel!");
+                clearInterval(fuelIntervalId);
+            }
+            $('.fuel-bar').val(this.fuel);
+            this.fuel -= decrement;
+            if (this.score >= threshold) {
+                decrement++;
+                threshold *= 10;
+            }
+        }, 1000);
     }
 
     collisionHandler(id) {
         let message = 'You crashed';
         switch (id) {
             case 0: // fuel
-                this.points += 100;
+                this.fuel = Math.min(100, this.fuel + 20);
                 return;
             case 1: // terrain
                 message = message + ' into the ground!';
@@ -105,8 +126,13 @@ class Game {
                 this.points *= 2;
                 return;
         }
+        this.endGame(message);
+    }
+
+    endGame(message) {
         this.canvas.style.display = 'none';
         $('.container-end').css('opacity', 1.0);
+        $('.container-score').css('opacity', 0.0);
         $('.game-over-message').text(message);
         $('.game-over-points').text('Points: ' + this.points);
         this.reset();
@@ -114,6 +140,7 @@ class Game {
 
     reset() {
         this.points = 0;
+        this.fuel = 100;
         this.scene.reset();
         this.initCamera();
         this.controls = new AFOControls(this.camera, this.canvas);
