@@ -13,15 +13,15 @@ const html = `
         The whole world is infected by COVID-19 and the only survivors are on
         board Air Force One. <br> President Trump has told you to <b>keep flying
         </b> until further orders. <br> Don't run out of fuel by <b> collecting 
-        fuel items.</b> <br> <b>Avoid any black clouds </b> that are dangerous storms 
-        that can crash the plane. 
+        fuel items.</b> <br> Collect food supplies. <b>Water</b>: 100 points.
+        <b>Donut</b>: 500 points. <b>Burger</b>: 2x points.
     </div>
     <div class='instructions'>
         <b> Flight Controls: </b> <br>
-        <i>W/S</i>: Accelerate/Decelerate <br>
         <i>Q/E</i>: Roll Left/Right <br>
         <i>Left/Right Arrow</i>: Turn Left/Right <br>
         <i>Up/Down Arrow</i>: Pitch Up/Down <br>
+        <i>Hold Shift</i>: Move Faster <br>
     </div>
     <div class='start-instructions'>
         <b>Press SPACE to start.</b>
@@ -38,6 +38,15 @@ const html = `
         <b>Press SPACE to restart.</b>
     </div>
 </div>
+
+<div class='container-score'>
+    <div class='score'>Score:</div>
+    <div class='container-fuel'>
+        <div class='fuel-text'>Fuel: </div>
+        <progress class='fuel-bar' value='100' max='100'></progress>
+    </div>
+</div>
+
 <style>
     body, html {
         height: 100%;
@@ -110,6 +119,37 @@ const html = `
         margin-top: 2%;
         margin-bottom: 2%;
         width: 100%;
+    }
+    .container-score {
+        opacity: 0.0;
+        position: absolute;
+        top: 5%;
+        right: 5%;
+    }
+    .score {
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 30px;
+        display: inline-block;
+        vertical-align: middle;
+        width: 100%;
+        text-align: right;
+        margin-bottom: 5%;
+    }
+    .container-fuel {
+        width: 100%;
+        text-align: left;
+    }
+    .fuel-text {
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        font-size: 30px;
+        display: inline-block;
+    }
+    .fuel-bar {
+        display: inline-block;
+        width: 200px;
+        padding: 3px;
+        background: #444;
+        border-radius: 5px;
     }
 </style>
 `;
