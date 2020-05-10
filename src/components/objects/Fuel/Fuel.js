@@ -4,18 +4,19 @@ import MODEL from './Fuel.gltf';
 import { ResourceTracker } from 'helpers';
 
 /**
- * Imports and loads mesh of airplane, using downloaded .obj and .mtl files.
- * Acknowledgements: Airplane.{gltf, bin}, Airplane Texture.jpg
- *  Name: Airplane
- *  Author: Poly By Google
- *  Source: https://poly.google.com/view/8ciDd9k8wha
+ * Imports and loads mesh of airplane, using downloaded .gltf files.
+ * Acknowledgements: Fuel.{gltf, bin}
+ *  Name: Gas Can
+ *  Author: Justin Randall
+ *  Source: https://poly.google.com/view/fmGMxckMykj
  *  License: CC-BY
  */
 class Fuel extends Group {
     constructor(position) {
         super();
-        const SCALE = 1000;
-        this.COLLISION_RANGE = 3000;
+        const SCALE = 2000;
+        this.COLLISION_RANGE = 4000;
+        this.name = 'fuel';
 
         // ResourceTracker code taken from
         // https://github.com/gfxfundamentals/threejsfundamentals/blob/master/
