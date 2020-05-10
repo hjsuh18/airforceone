@@ -71,7 +71,7 @@ class Game {
     initCamera() {
         // Set up camera
         const CAMERA_HEIGHT = 5000;
-        const CAMERA_FAR = 30000;
+        const CAMERA_FAR = 15000;
         this.camera.position.set(0, 0, CAMERA_HEIGHT);
         this.camera.far = CAMERA_FAR;
         this.camera.lookAt(new Vector3(1, 0, CAMERA_HEIGHT));

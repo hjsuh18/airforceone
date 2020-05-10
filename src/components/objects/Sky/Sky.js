@@ -21,10 +21,10 @@ class Sky extends Group {
         this.minHeight = minHeight;
         this.width = width;
         this.height = height;
-        this.createItem(Fuel, 10, 20, 1000);
         this.createItem(Water, 5, 10, 1000);
-        this.createItem(Donut, 3, 8, 1000);
-        this.createItem(Burger, 1, 5, 1000);
+        this.createItem(Fuel, 3, 6, 1000);
+        this.createItem(Donut, 2, 5, 1000);
+        this.createItem(Burger, 1, 3, 1000);
     }
 
     createItem(constructor, minCount, maxCount, zRange) {

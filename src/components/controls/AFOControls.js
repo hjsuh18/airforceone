@@ -69,7 +69,7 @@ class AFOControls {
     }
 
     move() {
-        this.movementSpeed = 100.0;
+        this.movementSpeed = 150.0;
     }
 
     keydown(event) {

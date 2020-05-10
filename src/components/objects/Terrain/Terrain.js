@@ -35,8 +35,8 @@ class Terrain extends Group {
         // magic numbers
         this.UNIT_WIDTH = 1000; // width of single mesh segment
         this.UNIT_HEIGHT = 1000; // height of single mesh segment
-        this.PLANE_WIDTH = 100; // # mesh segments in width of unit plane
-        this.PLANE_HEIGHT = 100; // # mesh segments in height of unit plane
+        this.PLANE_WIDTH = 50; // # mesh segments in width of unit plane
+        this.PLANE_HEIGHT = 50; // # mesh segments in height of unit plane
         this.TERRAIN_MIN_WIDTH = 1; // # planes left/right of current position
         this.TERRAIN_MIN_HEIGHT = 1; // # planes front/behind current position
         this.TERRAIN_MAX_WIDTH = 2; // # planes beyond which are disposed
