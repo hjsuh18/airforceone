@@ -1,4 +1,4 @@
-import { Vector3, Scene, Color, DirectionalLight } from 'three';
+import { Vector3, Scene, Color, DirectionalLight, AmbientLight } from 'three';
 import { Terrain, Airplane } from 'objects';
 
 class SeedScene extends Scene {
@@ -21,14 +21,16 @@ class SeedScene extends Scene {
         this.background = new Color(0x7ec0ee);
 
         // Add meshes to scene
-        const light = new DirectionalLight(0xffffff, 1);
+        const light = new DirectionalLight(0xffffff, 0.6);
         light.position.set(0, 0, 1);
+        this.add(light);
+        const ambientLight = new AmbientLight(0xffffff, 0.4);
+        this.add(ambientLight);
 
         // offset location of object we are following with camera
         this.cameraPositionOffset = new Vector3(0, -3, -15);
         this.terrain = new Terrain(camera, game);
         this.airplane = new Airplane(camera, this.cameraPositionOffset, game);
-        this.add(light);
         this.add(this.terrain);
         this.add(this.airplane);
         this.addToUpdateList(this.terrain);
