@@ -178,7 +178,7 @@ class Terrain extends Group {
             (total, v, i) => total + v.z * baryCoords[i]
         , 0);
         if (planeHeight >= position.z) {
-            this.game && this.game.collisionHandler();
+            this.game && this.game.collisionHandler(1);
         }
     }
 
