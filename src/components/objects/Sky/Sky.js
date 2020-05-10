@@ -1,5 +1,5 @@
+import { Fuel, Burger, Donut, Water } from 'objects';
 import { Group, Vector3 } from 'three';
-import { Fuel } from 'objects';
 
 /**
  * Wrapper class for any objects in the sky. Currently this includes fuel items.
@@ -16,33 +16,38 @@ class Sky extends Group {
     constructor(game, translate, minHeight, width, height) {
         super();
         this.game = game;
-        this.fuel = [];
+        this.items = [];
         this.translate = translate;
+        this.minHeight = minHeight;
+        this.width = width;
+        this.height = height;
+        this.createItem(Fuel, 10, 20, 1000);
+        this.createItem(Water, 5, 10, 1000);
+        this.createItem(Donut, 3, 8, 1000);
+        this.createItem(Burger, 1, 5, 1000);
+    }
 
-        const MIN_FUEL_COUNT = 10;
-        const MAX_FUEL_COUNT = 20; // TODO: lower after testing
-        const Z_RANGE = 1000;
-
-        const fuelCount = MIN_FUEL_COUNT + Math.floor(
-            Math.random() * (MAX_FUEL_COUNT - MAX_FUEL_COUNT)
+    createItem(constructor, minCount, maxCount, zRange) {
+        const fuelCount = minCount + Math.floor(
+            Math.random() * (maxCount - maxCount)
         );
         for (let i = 0; i < fuelCount; i++) {
-            const pos = translate.clone();
+            const pos = this.translate.clone();
             const offset = new Vector3(
-                Math.floor(Math.random() * width),
-                Math.floor(Math.random() * height),
-                Math.floor(Math.random() * Z_RANGE) + minHeight
+                Math.floor(Math.random() * this.width),
+                Math.floor(Math.random() * this.height),
+                Math.floor(Math.random() * zRange) + this.minHeight
             );
             pos.add(offset);
-            const f = new Fuel(pos);
-            this.fuel.push(f);
+            const f = new constructor(pos);
+            this.items.push(f);
             this.add(f);
         }
     }
 
     /* eslint-disable no-unused-vars */
     update(timeStamp) {
-        this.fuel.forEach((f) => f.update(timeStamp));
+        this.items.forEach((i) => i.update(timeStamp));
     }
     /* eslint-enable no-unused-vars */
 
@@ -51,16 +56,31 @@ class Sky extends Group {
      * @param {Vector3} position
      */
     handleCollision(position) {
-        this.fuel.forEach((f) => {
-            if (f.handleCollision(position)) {
-                this.game && this.game.collisionHandler(0);
+        this.items.forEach((i) => {
+            if (i.handleCollision(position)) {
+                let id = 0;
+                switch (i.name) {
+                    case 'fuel':
+                        id = 0;
+                        break;
+                    case 'water':
+                        id = 2;
+                        break;
+                    case 'donut':
+                        id = 3;
+                        break;
+                    case 'burger':
+                        id = 4;
+                        break;
+                }
+                this.game && this.game.collisionHandler(id);
             }
         });
-        this.fuel = this.fuel.filter((f) => !f.handleCollision(position));
+        this.items = this.items.filter((i) => !i.handleCollision(position));
     }
 
     dispose() {
-        this.fuel.forEach((f) => f.dispose());
+        this.items.forEach((i) => i.dispose());
     }
 }
 

@@ -95,9 +95,15 @@ class Game {
             case 1: // terrain
                 message = message + ' into the ground!';
                 break;
-            case 2: // cloud
-                message = message + ' into a cloud!';
-                break;
+            case 2: // water
+                this.points += 100;
+                return;
+            case 3: // donut
+                this.points += 500;
+                return;
+            case 4: // burger
+                this.points *= 2;
+                return;
         }
         this.canvas.style.display = 'none';
         $('.container-end').css('opacity', 1.0);
