@@ -111,7 +111,7 @@ class Game {
         let message = 'You crashed';
         switch (id) {
             case 0: // fuel
-                this.fuel = Math.min(100, this.fuel + 20);
+                this.fuel = Math.min(100, this.fuel + 10);
                 return;
             case 1: // terrain
                 message = message + ' into the ground!';
