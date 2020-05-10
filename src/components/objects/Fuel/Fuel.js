@@ -14,7 +14,8 @@ import { ResourceTracker } from 'helpers';
 class Fuel extends Group {
     constructor(position) {
         super();
-        const scale = 1000;
+        const SCALE = 1000;
+        this.COLLISION_RANGE = 3000;
 
         // ResourceTracker code taken from
         // https://github.com/gfxfundamentals/threejsfundamentals/blob/master/
@@ -23,14 +24,12 @@ class Fuel extends Group {
         const track = this.resMgr.track.bind(this.resMgr);
         const loader = new GLTFLoader();
         loader.setResourcePath('assets/');
-        /* eslint-disable no-unused-vars */
         loader.load(MODEL, (gltf) => {
             const root = track(gltf.scene);
             this.add(root);
             this.position.copy(position);
-            this.scale.multiplyScalar(scale);
+            this.scale.multiplyScalar(SCALE);
         });
-        /* eslint-enable no-unused-vars */
     }
 
     /* eslint-disable no-unused-vars */
@@ -41,6 +40,19 @@ class Fuel extends Group {
 
     dispose() {
         this.resMgr.dispose();
+    }
+
+    /**
+     * Returns true if position is within collision range of this
+     * @param {Vector3} position
+     */
+    handleCollision(position) {
+        const distance = position.distanceTo(this.position);
+        if (distance < this.COLLISION_RANGE) {
+            this.dispose();
+            return true;
+        }
+        return false;
     }
 }
 
