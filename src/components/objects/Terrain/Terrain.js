@@ -5,11 +5,12 @@ import {
     MeshPhongMaterial,
     Vector3,
 } from 'three';
+import { Sky } from 'objects';
 import p5 from 'p5';
 
 /**
- * Terrain is made of many threejs planes joined together. Each plane is made of
- * many mesh primitives.
+ * Terrain is made of many threejs planes joined together and Sky objects that
+ * contain objects in the sky. Each plane is made of many mesh primitives.
  * Perlin noise is used to set height of each vertex in mesh to simulate a rough
  * terrain-like surface.
  * As the passed in object moves, more terrain is generated procedurally to
@@ -29,6 +30,7 @@ class Terrain extends Group {
         this.object = object;
         this.game = game;
         this.planes = {}; // string(planeCoordinates) -> {coords, geometry}
+        this.skies = {}; // string(planeCoordinates) -> {coords, Sky}
 
         // magic numbers
         this.UNIT_WIDTH = 1000; // width of single mesh segment
@@ -58,12 +60,14 @@ class Terrain extends Group {
                 j++
             ) {
                 this.addPlane(currentPlane[0] + i, currentPlane[1] + j);
+                this.addSky(currentPlane[0] + i, currentPlane[1] + j);
             }
         }
     }
 
     reset() {
         Object.entries(this.planes).forEach((v) => v[1].geometry.dispose());
+        Object.entries(this.skies).forEach((v) => v[1].sky.dispose());
         this.init();
     }
 
@@ -84,11 +88,14 @@ class Terrain extends Group {
                     !([currentPlane[0] + i, currentPlane[1] + j] in this.planes)
                 ) {
                     this.addPlane(currentPlane[0] + i, currentPlane[1] + j);
+                    this.addSky(currentPlane[0] + i, currentPlane[1] + j);
                 }
             }
         }
         Object.entries(this.planes).forEach((v) => {
             const coords = v[1].coords;
+            const sky = this.skies[v[0]].sky;
+            sky.update(timeStamp);
             if (
                 coords[0] < currentPlane[0] - this.TERRAIN_MAX_WIDTH ||
                 coords[0] > currentPlane[0] + this.TERRAIN_MAX_WIDTH ||
@@ -97,6 +104,8 @@ class Terrain extends Group {
             ) {
                 delete this.planes[v[0]];
                 v[1].geometry.dispose();
+                sky.dispose();
+                delete this.skies[v[0]];
             }
         });
     }
@@ -133,6 +142,9 @@ class Terrain extends Group {
             console.warn("Camera outside terrain range.");
             return;
         }
+
+        entry && this.skies[entry[0]].sky.handleCollision(position);
+
         const bottomLeftIndex = (this.PLANE_HEIGHT - vertexY) *
             (this.PLANE_WIDTH + 1) + vertexX;
         const bottomRightIndex = (this.PLANE_HEIGHT - vertexY) *
@@ -182,6 +194,31 @@ class Terrain extends Group {
             position.y / (this.UNIT_HEIGHT * this.PLANE_HEIGHT)
         );
         return [x, y];
+    }
+
+    /**
+     * Adds Sky with coordinate (x,y)
+     * @param {Number} x: x-coordinate where unit is number of planes
+     * @param {Number} y: y-coordinate where unit is number of planes
+     */
+    addSky(x, y) {
+        const translate = new Vector3(
+            x * this.UNIT_WIDTH * this.PLANE_WIDTH,
+            y * this.UNIT_HEIGHT * this.PLANE_HEIGHT,
+            0
+        );
+        const sky = new Sky(
+            this.game,
+            translate,
+            this.TERRAIN_MAX_Z,
+            this.UNIT_WIDTH * this.PLANE_WIDTH,
+            this.UNIT_HEIGHT * this.PLANE_HEIGHT
+        );
+        this.add(sky);
+        this.skies[[x, y]] = {
+            coords: [x, y],
+            sky: sky
+        };
     }
 
     /**
