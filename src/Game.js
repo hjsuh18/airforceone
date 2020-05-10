@@ -17,6 +17,8 @@ class Game {
 
         this.points = 0;
         this.fuel = 100;
+        this.decrement = 2;
+        this.fuelIntervalId = null; // set when game starts
 
         setInterval(() => {
             $('.score').text('Score: ' + this.points);
@@ -91,17 +93,15 @@ class Game {
         $('.container-end').css('opacity', 0.0);
         $('.container-score').css('opacity', 1.0);
 
-        let decrement = 2;
         let threshold = 1000;
-        const fuelIntervalId = setInterval(() => {
+        this.fuelIntervalId = setInterval(() => {
             if (this.fuel <= 0) {
                 this.endGame("You ran out of fuel!");
-                clearInterval(fuelIntervalId);
             }
             $('.fuel-bar').val(this.fuel);
-            this.fuel -= decrement;
+            this.fuel -= this.decrement;
             if (this.score >= threshold) {
-                decrement++;
+                this.decrement++;
                 threshold *= 10;
             }
         }, 1000);
@@ -141,6 +141,8 @@ class Game {
     reset() {
         this.points = 0;
         this.fuel = 100;
+        clearInterval(this.fuelIntervalId);
+        this.decrement = 2;
         this.scene.reset();
         this.initCamera();
         this.controls = new AFOControls(this.camera, this.canvas);
