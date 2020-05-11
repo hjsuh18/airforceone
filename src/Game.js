@@ -22,6 +22,7 @@ class Game {
 
         setInterval(() => {
             $('.score').text('Score: ' + this.points);
+            $('.fuel-bar').val(this.fuel);
         }, 100);
 
         // Initialize core ThreeJS components
@@ -96,13 +97,15 @@ class Game {
         let threshold = 1000;
         this.fuelIntervalId = setInterval(() => {
             if (this.fuel <= 0) {
+                clearInterval(this.fuelIntervalId);
                 this.endGame("You ran out of fuel!");
             }
-            $('.fuel-bar').val(this.fuel);
-            this.fuel -= this.decrement;
-            if (this.score >= threshold) {
-                this.decrement++;
-                threshold *= 10;
+            else {
+                this.fuel -= this.decrement;
+                if (this.score >= threshold) {
+                    this.decrement++;
+                    threshold *= 10;
+                }
             }
         }, 1000);
     }
