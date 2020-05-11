@@ -164,7 +164,10 @@ class Terrain extends Group {
             verts.push(topLeftIndex);
         }
         verts = verts.map((index) => {
-            if (index < 0 || index >= geometry.vertices.length) {
+            if (geometry.vertices == null ||
+                index < 0 ||
+                index >= geometry.vertices.length
+            ) {
                 return null;
             }
             return geometry.vertices[index];
